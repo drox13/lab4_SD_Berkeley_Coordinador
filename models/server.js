@@ -4,7 +4,7 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 
 const cors = require('cors');
-const { connectInstance } = require('../controller/monitor');
+const { sendTime } = require('../controller/monitor');
 
 
 class MyServer{
@@ -29,17 +29,16 @@ class MyServer{
     }
 
     sockets() {
-		this.io.on("connection", (socket) => {
-            console.log("se conecto una instancia");      
-            
-                socket.emit("prueba",{
-                    data: "este es el dato de prueba desde el coordinador"
-                });
-                socket.on("saludo", (arg) =>{
-                    console.log(arg);
-                })
-        });
+		// this.io.on("connection", (socket) => {           
+        //         socket.emit("prueba",{
+        //             data: "este es el dato de prueba desde el coordinador"
+        //         });
+        //         socket.on("saludo", (arg) =>{
+        //             console.log(arg);
+        //         })
+        // });
 
+        this.io.on("connection", sendTime);
 	}
 
     listen(){
