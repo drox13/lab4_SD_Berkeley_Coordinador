@@ -10,4 +10,12 @@ setInterval(() => {
     .catch(error=>{
         console.log(error);
     });
-}, 1000); //60000 = 1 minuto
+}, 60000); //60000 = 1 minuto
+
+const connectInstance = (socketInstancia) => {
+	console.log('instancia connectada!', socketInstancia.id);
+}
+
+module.exports = {
+	connectInstance,
+};
