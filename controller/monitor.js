@@ -1,4 +1,6 @@
 const axios = require('axios');
+const shell = require('shelljs');
+const PATH = process.cwd();
 let connections_amount = 0;
 var time = "vacio"
 let my_time = 'tiempo del coordinador';
@@ -52,6 +54,21 @@ const sendTime = (socket) => {
         console.log(message, "esto es el desface")
     });
 }
+var numberInstance = 4;
+const createNewinstance = (req, res) => {
+	try {
+		//let numberInstance = fs.readFileSync(PATH + '/docker/counter.tmp', 'utf8');
+		// circularList.addNode(new Node(`instancia${numberInstance}`));
+		//circularList.showList();
+		shell.exec(PATH + `/docker/newInstance.sh ${numberInstance}`);
+		numberInstance++
+		//fs.writeFileSync(PATH + '/docker/counter.tmp', numberInstance)
+		res.send({msg: 'New instance created'});
+	} catch (error) {
+		console.log(error);
+	}
+};
 module.exports = {
-    sendTime
+    sendTime,
+    createNewinstance
 };

@@ -1,8 +1,10 @@
 const { Router } = require('express');
-const {} = require('../controller/monitor');
+const {createNewinstance} = require('../controller/monitor');
 
 const router = Router();
 
 //aqui van los servicios
+
+router.get('/instance', createNewinstance);
 
 module.exports = router;
