@@ -1,0 +1,19 @@
+#construye la imagen para crear los contenedores de las instancias
+FROM node
+
+ENV TZ=America/Bogota
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt update
+RUN apt upgrade -y
+
+RUN npm install pm2 -g
+
+RUN mkdir lab4
+WORKDIR /home/lab4
+RUN git clone --branch main https://github.com/drox13/lab4_SD_intancia.git
+
+WORKDIR /home/lab4/lab4_SD_intancia
+RUN npm install
+
+CMD ["pm2-runtime", "index.js"]
