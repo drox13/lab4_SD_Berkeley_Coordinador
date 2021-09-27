@@ -21,26 +21,30 @@ setInterval(() => {
 }, 1000); //60000 = 1 minuto
 
 function berkeleysAverage (gaps_list) {
+    //console.log("Entro a berkeley", gaps_list);
    // let api_time = 0; //AQUÍ TOCA SACAR EL TIEMPO DE LA API XD
     //let local_gap_time = (time - api_time)/1000; //AQUÍ EL DESFASE DEL COORDINADOR
     
     let avg_gap = 0; // AQUÍ VAMOS A CALCULAR EL PROMEDIO DE TODOS LOS DESFASES
-    for(let i = 0; i < gaps_list; i++) {
+    for(let i = 0; i < gaps_list.length; i++) {
         avg_gap += gaps_list[i].desfase;
     }
     //avg_gap += local_gap_time; //SE INCLUYE EL DESFASE DEL COORDINADOR, TODO ESTÁ EN SEGUNDOS
     let final_avg = avg_gap/(gaps_list.length); // SE DIVIDE EN LA CANTIDAD DE INSTANCIAS
     new_time = api_time - final_avg; //SE AJUSTA EL TIEMPO DEL COORDINADOR CON final_avg
-    //let adjusts_list = []; //acá vamos a guardar los ajustes para las demás instancias
-    for(let i = 0; i < gaps_list; i++) {
+    
+    let adjusts_list = []; //acá vamos a guardar los ajustes para las demás instancias
+    for(let i = 0; i < gaps_list.length; i++) {
         let temp = api_time - gaps_list[i].desfase; //aca vamos a guardar el tiempo que tenia la instancia
         adjustment = new_time - temp // se calcula el cade para la intacia implicada
-         // to individual socketid (private message)
-        io.to(gaps_list[i].id).emit("ajuste", adjustment); //aca estamos enviando a cada instancia el ajuste
+        //console.log(adjustment, "ajuste")
+        
+       
+
         const adjust_object = {id: gaps_list[i].id, adjustment: adjustment } // acá vamos a calcular esos ajustes para cada instancia, y añadimos su respectivo ID a cada ajuste
-        //adjusts_list.push(); // vamos agretando cada desajuste con su id a la lista
+        adjusts_list.push(adjust_object); // vamos agretando cada desajuste con su id a la lista
     }
-    //return adjusts_list; // aquí va la lista de objetos así [{id,desajuste}, {id,desajuste}, {id,desajuste}...]
+    return adjusts_list; // aquí va la lista de objetos así [{id,desajuste}, {id,desajuste}, {id,desajuste}...]
 }
 
 var instancesList = []
@@ -51,19 +55,30 @@ const sendTime = (socket) => {
    });
 
    setInterval(()=>{
-        socket.broadcast.emit("timeServer", {
+       //.broadcast (en local no funciona)
+        socket.emit("timeServer", {
             time: api_time,
             format: "UTC",
             offset: offset
         });
-    }, 5000);
+    }, 5000); //5s
 
     socket.on("desfase", (message)=>{
-        console.log(message, "esto es el desfase")
+        //console.log(message, "esto es el desfase")
         instancesList.push(message);
     });
 
-    berkeleysAverage(instancesList);
+    setInterval(()=>{
+        let adjusts_list = berkeleysAverage(instancesList);
+        console.log(adjusts_list, "asdsadas");
+        for (let i = 0; i < adjusts_list.length; i++) {
+            // to individual socketid (private message)
+            //io.to(socketId).emit(/* ... */);
+            socket.to(adjusts_list[i].id).emit("ajuste", adjusts_list[i].adjustment);
+        }
+
+    }, 5000); //5s
+
 }
 
 var numberInstance = 4;
