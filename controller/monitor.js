@@ -13,8 +13,10 @@ setInterval(() => {
         offset = data.utc_offset;
     })
     .catch(error=>{
-        console.log(error);
+        //console.log(error);
+        console.log("Error en api");
     });
+
 }, 1000); //60000 = 1 minuto
 
 function berkeleysAverage (gaps_list) {
@@ -54,6 +56,7 @@ const sendTime = (socket) => {
         console.log(message, "esto es el desface")
     });
 }
+
 var numberInstance = 4;
 const createNewinstance = (req, res) => {
 	try {
@@ -61,9 +64,14 @@ const createNewinstance = (req, res) => {
 		// circularList.addNode(new Node(`instancia${numberInstance}`));
 		//circularList.showList();
 		shell.exec(PATH + `/docker/newInstance.sh ${numberInstance}`);
-		numberInstance++
 		//fs.writeFileSync(PATH + '/docker/counter.tmp', numberInstance)
-		res.send({msg: 'New instance created'});
+		res.send({
+            msg: 'New instance created',
+            numberInstance: numberInstance,
+            ipIntancia: `119.18.0.${numberInstance}`,
+            port: `5000`
+        });
+        numberInstance++
 	} catch (error) {
 		console.log(error);
 	}
