@@ -3,7 +3,6 @@ const shell = require('shelljs');
 const PATH = process.cwd();
 let connections_amount = 0;
 
-const io = require('../controller/io').io();
 var api_time;
 let new_time = 'tiempo base para coordinar';
 var offset;
@@ -37,10 +36,7 @@ function berkeleysAverage (gaps_list) {
     let adjusts_list = []; //acá vamos a guardar los ajustes para las demás instancias
     for(let i = 0; i < gaps_list.length; i++) {
         let temp = api_time - gaps_list[i].desfase; //aca vamos a guardar el tiempo que tenia la instancia
-        adjustment = new_time - temp // se calcula el cade para la intacia implicada
-        //console.log(adjustment, "ajuste")
-        
-       
+        adjustment = new_time - temp // se calcula el ajuste para la intacia implicada
 
         const adjust_object = {id: gaps_list[i].id, adjustment: adjustment } // acá vamos a calcular esos ajustes para cada instancia, y añadimos su respectivo ID a cada ajuste
         adjusts_list.push(adjust_object); // vamos agretando cada desajuste con su id a la lista
@@ -50,13 +46,13 @@ function berkeleysAverage (gaps_list) {
 
 var instancesList = []
 const sendTime = (socket) => {
-
-   socket.on("Hello", (msg)=>{
-       console.log(msg);
-   });
-
-   setInterval(()=>{
-       //.broadcast (en local no funciona)
+    
+    socket.on("Hello", (msg)=>{
+        console.log(msg);
+    });
+    
+    setInterval(()=>{
+        //.broadcast (en local no funciona)
         socket.emit("timeServer", {
             time: api_time,
             format: "UTC",
@@ -68,18 +64,18 @@ const sendTime = (socket) => {
         //console.log(message, "esto es el desfase")
         instancesList.push(message);
     });
-
+    
     setInterval(()=>{
         let adjusts_list = berkeleysAverage(instancesList);
         console.log(adjusts_list, "asdsadas");
         for (let i = 0; i < adjusts_list.length; i++) {
             // to individual socketid (private message)
             //io.to(socketId).emit(/* ... */);
+            const io = require('../controller/io').io();
             io.to(adjusts_list[i].id).emit("ajuste", adjusts_list[i].adjustment);
         }
-
-    }, 8000); //8s
-
+        instancesList = [];
+    }, 9000); //8s
 }
 
 var numberInstance = 4;
