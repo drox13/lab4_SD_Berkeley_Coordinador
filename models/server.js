@@ -2,7 +2,6 @@ const PORT = 9000;
 const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-
 const cors = require('cors');
 const { sendTime } = require('../controller/monitor');
 
@@ -14,8 +13,6 @@ class MyServer{
         this.httpServer = createServer(this.app);
 		this.io = require('../controller/io').initialize(this.httpServer);
         require('../controller/monitor')  ;   
-        //require('./consumers/consumer');        
-       // new Server(this.httpServer, this.port);
         this.middleware();
         this.routes();
         this.sockets();
