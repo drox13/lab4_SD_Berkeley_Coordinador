@@ -3,6 +3,7 @@ const shell = require('shelljs');
 const PATH = process.cwd();
 let connections_amount = 0;
 
+const io = require('../controller/io').io();
 var api_time;
 let new_time = 'tiempo base para coordinar';
 var offset;
@@ -74,10 +75,10 @@ const sendTime = (socket) => {
         for (let i = 0; i < adjusts_list.length; i++) {
             // to individual socketid (private message)
             //io.to(socketId).emit(/* ... */);
-            socket.to(adjusts_list[i].id).emit("ajuste", adjusts_list[i].adjustment);
+            io.to(adjusts_list[i].id).emit("ajuste", adjusts_list[i].adjustment);
         }
 
-    }, 5000); //5s
+    }, 8000); //8s
 
 }
 

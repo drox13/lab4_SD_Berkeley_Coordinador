@@ -12,7 +12,10 @@ class MyServer{
         this.port = PORT;
         this.app = express();
         this.httpServer = createServer(this.app);
-		this.io = new Server(this.httpServer, this.port);
+		this.io = require('../controller/io').initialize(this.httpServer);
+        require('../controller/monitor')  ;   
+        //require('./consumers/consumer');        
+       // new Server(this.httpServer, this.port);
         this.middleware();
         this.routes();
         this.sockets();
@@ -29,24 +32,14 @@ class MyServer{
     }
 
     sockets() {
-		// this.io.on("connection", (socket) => {           
-        //         socket.emit("prueba",{
-        //             data: "este es el dato de prueba desde el coordinador"
-        //         });
-        //         socket.on("saludo", (arg) =>{
-        //             console.log(arg);
-        //         })
-        // });
-
-        this.io.on("connection", sendTime);
+		this.io.on("connection", sendTime);
 	}
 
     listen(){
         this.httpServer.listen(this.port);
         console.log(`Server on! PORT ${this.port}`);
-        // this.app.listen(this.port, ()=>{
-        // });
     }
 }
+
 
 module.exports = MyServer
