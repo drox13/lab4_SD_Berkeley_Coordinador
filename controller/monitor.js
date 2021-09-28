@@ -31,12 +31,12 @@ function berkeleysAverage (gaps_list) {
     }
     //avg_gap += local_gap_time; //SE INCLUYE EL DESFASE DEL COORDINADOR, TODO ESTÁ EN SEGUNDOS
     let final_avg = avg_gap/(gaps_list.length); // SE DIVIDE EN LA CANTIDAD DE INSTANCIAS
-    new_time = api_time - final_avg; //SE AJUSTA EL TIEMPO DEL COORDINADOR CON final_avg
+    new_time = api_time + final_avg; //SE AJUSTA EL TIEMPO DEL COORDINADOR CON final_avg
     
     let adjusts_list = []; //acá vamos a guardar los ajustes para las demás instancias
     for(let i = 0; i < gaps_list.length; i++) {
-        let temp = api_time - gaps_list[i].desfase; //aca vamos a guardar el tiempo que tenia la instancia
-        adjustment = new_time - temp // se calcula el ajuste para la intacia implicada
+        let temp = api_time + gaps_list[i].desfase; //aca vamos a guardar el tiempo que tenia la instancia
+        adjustment = new_time + temp // se calcula el ajuste para la intacia implicada
 
         const adjust_object = {id: gaps_list[i].id, adjustment: adjustment } // acá vamos a calcular esos ajustes para cada instancia, y añadimos su respectivo ID a cada ajuste
         adjusts_list.push(adjust_object); // vamos agretando cada desajuste con su id a la lista
