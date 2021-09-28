@@ -15,9 +15,10 @@ function berkeleysAverage(gaps_list) {
     let final_avg = avg_gap / gaps_list.length;
     my_time.setSeconds(api_time.getSeconds() - final_avg);
     let adjusts_list = [];
-    for (let i = 0; i < gaps_list; i++) {
-        const adjust_object = { id: gaps_list[i].id, adjustment: (my_time - (api_time + gaps_list[i])) }
-        adjusts_list.push();
+    for (let i = 0; i < gaps_list.length; i++) {
+        const adjust_object = { id: gaps_list[i].id, adjustment: (Math.abs(my_time - (api_time.setSeconds( api_time.getSeconds() + gaps_list[i].desfase))))/1000 }
+        adjusts_list.push(adjust_object);
+        console.log(adjust_object)
     }
     return adjusts_list;
 }
@@ -54,14 +55,13 @@ const sendTime = (socket) => {
             .catch(error => {
                 console.log("Error en api");
             });
-    }, 5000); //5s
+    }, 15000); //5s
 
     socket.on("desfase", (message) => {
         gaps_amount++;
         instancesList.push(message);
         if (gaps_amount == connections_amount) {
             let adjusts_list = berkeleysAverage(instancesList);
-            console.log(instancesList)
             for (let i = 0; i < adjusts_list.length; i++) {
                 const io = require('../controller/io').io();
                 io.to(adjusts_list[i].id).emit("ajuste", adjusts_list[i].adjustment);
